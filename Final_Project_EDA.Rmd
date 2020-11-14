@@ -1,0 +1,72 @@
+---
+title: "Final Project EDA"
+author: "Vaishali Devarakonda"
+date: "Nov. 12, 2020"
+output: html_notebook
+---
+
+#Intro
+
+I will be examining the two data sources for this project: the first source is a dataset from Kaggle describing audience and critic ratings for a specific movie, created by user Mormukutchaudhary. The other is a table from the-numbers.com that describes the market share for movie genres between 1995-2020.
+
+# Set Up
+
+### Clean up environment and load packages
+```{r}
+# clean up the RStudio environment 
+rm(list = ls())
+
+# load all packages here: `mosaic`, `tidyverse`, and all others used
+library(mosaic)
+library(tidyverse)
+library(tidyr)
+library(rvest)
+library(lubridate)
+library(ggplot2)
+
+#to import dataset I need
+library(readr)
+
+```
+
+### Load the data you need
+```{r}
+Movie_Ratings <- read_csv("Movie Ratings.csv")
+View(Movie_Ratings)
+```
+
+```{r}
+#look at the first 6 rows
+head(Movie_Ratings, 6)
+```
+Movie_ratings (from Kaggle) has the following case definition: "list the budget, audience, and critic ratings for a given movie".
+
+```{r}
+#rename columns for readability
+Movie_Ratings <- Movie_Ratings %>% 
+  rename(critic = 'Rotten Tomatoes Ratings %',
+         audience = 'Audience Ratings %',
+         year = 'Year of release')
+```
+
+For the second data source, we'll need to extract it from 'the-numbers.com'
+
+```{r}
+url <- "https://www.the-numbers.com/market/genres"
+
+tableList <- url %>%
+  read_html() %>%
+  html_nodes(css = "table") %>%
+  html_table(fill = TRUE)
+
+Genres <- tableList[[1]]
+head(Genres)
+```
+Genres (from the-numbers.com) has the following case definition: "list the number of movies, total box office revenue, number of tickets sold, and the total market share for each movie genre".
+
+However, we'll need to get some cleaning done in order to make this data frame useful.
+
+```{r}
+Genres <- Genres %>% mutate(Tickets = as.integer(Tickets),
+                            Movies = as.integer(Movies))
+```
