@@ -1754,7 +1754,8 @@ summary {
 
 <!-- rnb-text-begin -->
 <p>#Intro</p>
-<p>I will be examining the two data sources for this project: the first source is a dataset from Kaggle describing audience and critic ratings for a specific movie, created by user Mormukutchaudhary. The other is a table from the-numbers.com that describes the market share for movie genres between 1995-2020.</p>
+<p>I will be examining the two data sources for this project: the first source is a dataset from Kaggle describing audience and critic ratings for a specific movie, created by user Mormukutchaudhary. This dataset by itself can have many uses. For example, moviegoers can examine this to determine whether a movie is worth watching.</p>
+<p>The other is a table from the-numbers.com that describes the market share for movie genres between 1995-2020. This dataset is more useful, for example, to people in the movie industry who are coming up with a new concept for a movie. It could also be useful for movie marketing teams to come up with a good strategy that could result in higher box office numbers and/or ratings</p>
 <div id="set-up" class="section level1">
 <h1>Set Up</h1>
 <div id="clean-up-environment-and-load-packages" class="section level3">
@@ -1817,49 +1818,89 @@ Movie_Ratings &lt;- Movie_Ratings %&gt;%
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>For the second data source, we’ll need to extract it from ‘the-numbers.com’</p>
+<p>The second data source comes from ‘the-numbers.com’. However, I will be using a cleaned version of the data, which is loaded in a csv format.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudXJsIDwtIFwiaHR0cHM6Ly93d3cudGhlLW51bWJlcnMuY29tL21hcmtldC9nZW5yZXNcIlxuXG50YWJsZUxpc3QgPC0gdXJsICU+JVxuICByZWFkX2h0bWwoKSAlPiVcbiAgaHRtbF9ub2Rlcyhjc3MgPSBcInRhYmxlXCIpICU+JVxuICBodG1sX3RhYmxlKGZpbGwgPSBUUlVFKVxuXG5HZW5yZXMgPC0gdGFibGVMaXN0W1sxXV1cbmhlYWQoR2VucmVzKVxuYGBgIn0= -->
-<pre class="r"><code>url &lt;- &quot;https://www.the-numbers.com/market/genres&quot;
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuR2VucmVzIDwtIHJlYWQuY3N2KFwiQzovVXNlcnMvMTh2ZGUvT25lRHJpdmUvRGVza3RvcC9QU1UvU1RBVCAxODQvR2VucmVzLmNzdlwiKVxuXG5HZW5yZXMgPC0gR2VucmVzICU+JSByZW5hbWUgKHJhbmsgPSAnw68uLlJhbmsnLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAnQk9fUmV2IChtaWxsaW9ucyknICA9ICdUb3RhbC5Cb3guT2ZmaWNlJylcblxuaGVhZChHZW5yZXMsIDYpXG5gYGAifQ== -->
+<pre class="r"><code>Genres &lt;- read.csv(&quot;C:/Users/18vde/OneDrive/Desktop/PSU/STAT 184/Genres.csv&quot;)
 
-tableList &lt;- url %&gt;%
-  read_html() %&gt;%
-  html_nodes(css = &quot;table&quot;) %&gt;%
-  html_table(fill = TRUE)
+Genres &lt;- Genres %&gt;% rename (rank = &#39;ï..Rank&#39;,
+                             &#39;BO_Rev (millions)&#39;  = &#39;Total.Box.Office&#39;)
 
-Genres &lt;- tableList[[1]]
-head(Genres)</code></pre>
+head(Genres, 6)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Nn0sInJkZiI6Ikg0c0lBQUFBQUFBQUJsMVRUVytiUUJCZHNIRmtTMjVjNVEva2tOd21kTDkzT2FhSjFGNnFWb2tQdVZLTWEyUU1Gc1pKZXVzdlQ3dVFYWEJCV2kzdjdadVpONnZaaC9zbk5udWFJWVJHYUl4OE5Bck1MNXJjL1NCVVVJVEd2a0dlT1prMis2dFJYVFRIWnMzdDdwbmx0K0ZHYlZaZytVVzd2d2RPYjFmUGFWRWZxOVFTazl1a3pzckNvdUMraW5leE83b3JkK25xdDBVZmw1c3F5L08wK3ZSNFBPelQ0dEJsK0ZwV1ZWa05DZ1VFc01JbmdITUhCREN0SEtEQXBPNWxSREFMUnBLTFFjN3pLOGtCWXdaYUsrQmRqdk1ycm9DUkNERFZRSFRVMFV3Q0Z4ZzRGV2J2MVl3RHhSaXdTVWFqbnFZWUNCTWdKUWFOWlVjVDQ1QXhFRW9BMWtOSDh3aUlTUk5SQlRxaWpwU2dNQUZtU2d2aTJwa0xFSkVFUWlsd0pYcVNDZ21NYzFDc1UxS0lURkhOdE9uVCtaZ1RVRXFEMEJ3SWx3TVhFNnBDaHE4N2hFT2lPMFJFS0VTUGVDZ2lod0o5Q2tSSTVmVmd6b0lpM3FXSFFibnhRMXhzbmVCTFd2U3o5SzE4em96OEhTMldaUjNubDUvTDE4dnY2M1dXT05YWk1rdTJhZTFrd2VNbU5obityenV0eXBmUTFXN20yLytEMm04eU5Kams4Y0VaZE9Sc0ZkZHh1RGFqYlBLaXQwSElXYmx2SnQ0RStSZjJsWndHZTlXQVdCeUx4c25xSnRrY2krME5KMDBGKzl3OGE4ODdlWXBlYjlQL2EzTUY3b2JTNGxkV3VKc0k4dmhubWx2d3diVGNkaHp1cTZ5b1hTdUdQWVIxYzVPT1NjcmNNVzF6Nk8wZkVjMjN2em9FQUFBPSJ9 -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Nn0sInJkZiI6Ikg0c0lBQUFBQUFBQUJndHlpVERtaXVCaVlHQmdabUJoWUdKZ1pnVXlHZGljQXd5TlRJMFlHRmlZZ0R4R29Bd25pSzRBcWhJR1NRTXhMNVJtQkdJbXNIYWdhaUJtaFlvTGdHbUlSazdIbExMVXZKTFNvbFNvQUp0amNrbG1maDZVeCtwU2xKaWJDSk55enM5TlRhbUU4amhDTW9veWMzSlNpMkN5SHZsRlJmbEZDUHRaOUlCWWhJRkJsQnRvalFPUTNRaDBUaXRRamc4azc2Ujc5dmFpZnd3TVRtb2M5NVIzQVdtRm4xWmJIZ0ZwK1p2dlhKWUFhYUVEMjAwa2dEVGJUK25ZREpEUG9mb1loWFRuTEdCZ2NQeng3Zmx6b0U4Y3Y5eDRjRzBEa1A0ODVicm5CU0Q5ZFBPWk9RZUE5SzJHUTFNYUVQb2NySDNPQU1GWkJ4TTlrYXFIN3VzYzlDVm5Bc0VzQjEwb1h4RktpM0xaRml5K3pvVVd3S3g1aWJtcHhXaUJ4MUtVbUpjTlUrQ2Vtb2NJUk4vOHNreWdjZ2hQME1rL1BpaTFURUVqRnhoZXdMQXQxb1JLc0lka0ptZW5sc0RVc1FabkpBS05RTFdZc3lpL1hBOW1PU2hrbVNDZUFvY3dpZ3VUY3hLTFlTNkVDWEtsSkpZazZxVUJJeEZvTHNNL05DM3MrUVdndUFacVloS0dwZzlrell4RmFBTDhwWGtnbDZUb0ptZVU1bVhyV29Bc2dLWXpScWpyR0pIU0lDUENsVXovb1VheHdrSW9OUzg5TXc4V1hxdzVpVW1wT1ZBT0g5REhZQS9yRlJSbDVwWEFmQUlVTGRZcnlTOUpoS25qU3M3UGdZbUEvY2J3RHdCSURscmNNd01BQUE9PSJ9 -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["Genre"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Movies"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Total Box Office"],"name":[4],"type":["chr"],"align":["left"]},{"label":["Tickets"],"name":[5],"type":["chr"],"align":["left"]},{"label":["Share"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"Adventure","3":"1,070","4":"$64,003,887,487","5":"9,164,927,892","6":"27.30%","_rn_":"1"},{"1":"2","2":"Action","3":"1,044","4":"$47,319,028,189","5":"6,701,350,513","6":"20.18%","_rn_":"2"},{"1":"3","2":"Drama","3":"5,387","4":"$36,450,425,457","5":"5,596,122,475","6":"15.55%","_rn_":"3"},{"1":"4","2":"Comedy","3":"2,368","4":"$34,200,064,297","5":"5,256,344,733","6":"14.59%","_rn_":"4"},{"1":"5","2":"Thriller/Suspense","3":"1,153","4":"$20,135,660,806","5":"2,912,838,886","6":"8.59%","_rn_":"5"},{"1":"6","2":"Horror","3":"645","4":"$12,333,575,085","5":"1,778,584,146","6":"5.26%","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[6]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["rank"],"name":[1],"type":["int"],"align":["right"]},{"label":["Genre"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Movies"],"name":[3],"type":["int"],"align":["right"]},{"label":["BO_Rev (millions)"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Tickets"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Share"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"Adventure","3":"1070","4":"64003887487","5":"9164927892","6":"27.30","_rn_":"1"},{"1":"2","2":"Action","3":"1044","4":"47319028189","5":"6701350513","6":"20.18","_rn_":"2"},{"1":"3","2":"Drama","3":"5387","4":"36450425457","5":"5596122475","6":"15.55","_rn_":"3"},{"1":"4","2":"Comedy","3":"2368","4":"34200064297","5":"5256344733","6":"14.59","_rn_":"4"},{"1":"5","2":"Thriller","3":"1153","4":"20135660806","5":"2912838886","6":"8.59","_rn_":"5"},{"1":"6","2":"Horror","3":"645","4":"12333575085","5":"1778584146","6":"5.26","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[6]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
   </script>
 </div>
 <!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Genres (from the-numbers.com) has the following case definition: “list the number of movies, total box office revenue, number of tickets sold, and the total market share for each movie genre”.</p>
-<p>However, we’ll need to get some cleaning done in order to make this data frame useful.</p>
+<p>From this table, we can see that the case meaning is the following: “list the number of movies, box office revenue (in millions), number of tickets sold, and the market share (%) for each genre”.</p>
+</div>
+<div id="similarities-between-the-data" class="section level3">
+<h3>Similarities between the data?</h3>
+<p>We can see that Movie_Ratings and Genres have a common variable: Genre. But how many values are common between the two data frames?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuR2VucmVzIDwtIEdlbnJlcyAlPiUgbXV0YXRlKFRpY2tldHMgPSBhcy5pbnRlZ2VyKFRpY2tldHMpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1vdmllcyA9IGFzLmludGVnZXIoTW92aWVzKSlcbmBgYCJ9 -->
-<pre class="r"><code>Genres &lt;- Genres %&gt;% mutate(Tickets = as.integer(Tickets),
-                            Movies = as.integer(Movies))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuR2VucmVzICU+JSBkaXN0aW5jdChHZW5yZSlcbmBgYCJ9 -->
+<pre class="r"><code>Genres %&gt;% distinct(Genre)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUHJvYmxlbSB3aXRoIGBtdXRhdGUoKWAgaW5wdXQgYFRpY2tldHNgLlxuaSBOQXMgaW50cm9kdWNlZCBieSBjb2VyY2lvblxuaSBJbnB1dCBgVGlja2V0c2AgaXMgYGFzLmludGVnZXIoVGlja2V0cylgLk5BcyBpbnRyb2R1Y2VkIGJ5IGNvZXJjaW9uUHJvYmxlbSB3aXRoIGBtdXRhdGUoKWAgaW5wdXQgYE1vdmllc2AuXG5pIE5BcyBpbnRyb2R1Y2VkIGJ5IGNvZXJjaW9uXG5pIElucHV0IGBNb3ZpZXNgIGlzIGBhcy5pbnRlZ2VyKE1vdmllcylgLk5BcyBpbnRyb2R1Y2VkIGJ5IGNvZXJjaW9uXG4ifQ== -->
-<pre><code>Problem with `mutate()` input `Tickets`.
-i NAs introduced by coercion
-i Input `Tickets` is `as.integer(Tickets)`.NAs introduced by coercionProblem with `mutate()` input `Movies`.
-i NAs introduced by coercion
-i Input `Movies` is `as.integer(Movies)`.NAs introduced by coercion</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibnJvdyI6MTQsIm5jb2wiOjF9LCJyZGYiOiJINHNJQUFBQUFBQUFCbDFSVFcvQ01BeDFDNldqMjJBU2Y0QS9RS2N4N2JBakEybTdJQ0UwYVZ5ek5JeUtORUZ1dW8vYmZqbWJXNUpxUzZRbzhiUDliRCt2RjV2YlpKTUFRQWU2RUVJbm9pLzA1cXViNmQwVW9CdVNGWkNuWDcrZkZEVnFBSUFydWdQcjZNK3lkNkZNaGNJQ3ZSazN1VmJXaWhiSUN1WmNjMTJJN010YVo4ODd6S1VVNkx4UEdsRTdLMTdyZ2ludVdPTmxWZWFjU1d1ZUx6U3ZDcXJMME5GZFBFakc5K04vSmVJWFVScUJycG5SWEJNam11dVZ3SzNHdi96RFpTVk5mcEJpL0NnVWlyTHRRakNabXk5UGpVaXhnbUpPU3JSZ2srbEY5bEYvcEM3NmttNzREYzBaK0pSY3N0S25UREptV0xvbENZa1hqbDVLckErMTBwUVUxcHVKdk9RQVBXQllxYnFUYk1KM2xkcFA3dXNDZHFOZ3V3dE9uYlgvNEZReS9MRlVrZHVWVUcrNWN1SkZrcjBLdDVvQlRkd01uQjR3VjhaTlFtaVpHbTNhRlNaY1M0YzBzOEh4Ri9lM2JncVJBZ0FBIn0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Genre"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Adventure"},{"1":"Action"},{"1":"Drama"},{"1":"Comedy"},{"1":"Thriller"},{"1":"Horror"},{"1":"Romance"},{"1":"Musical"},{"1":"Documentary"},{"1":"Black Comedy"},{"1":"Western"},{"1":"Concert/Performance"},{"1":"Multiple Genres"},{"1":"Reality"}],"options":{"columns":{"min":{},"max":[10],"total":[1]},"rows":{"min":[10],"max":[10],"total":[14]},"pages":{}}}
+  </script>
 </div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTW92aWVfUmF0aW5ncyAlPiUgZGlzdGluY3QoR2VucmUpXG5gYGAifQ== -->
+<pre class="r"><code>Movie_Ratings %&gt;% distinct(Genre)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NywibmNvbCI6MX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJsMVF5MDdETUJEY3VIVkRJb0VxOFIyTmFCRWZVTFVTSEZIRm9WZmpHQnJockN2SDRYSGp0N2swcklNTndnYy9adlk1czl2dXI4dDlDUUFUbUFLRENhY3Z6RGIzeTlYTkNtREtDR1VVS2Z6N1RsbVhJd0V3cDVPSHdHeGpXbFYvQkZTczYxZUZycmNxaHRmU05RWWp1alBXR2hzUTMxclJpZ0R5bldrRnlsaDM5bkN3amRiS0pudHdGSzNxd2c2LzVLMUNtdmcvczdEbXJZclo1M1RZSjEzRE1IeWxMYVVXWGRxeXJJVVQxUk10U0gzaGxKVGs1dWhWVVJIem52Q2tPTE1KTWUvUmIxSXY1S0hIbDhYeXlrOElaa0pZTHh0Ti9mdG5QelBaRUhyeDZLSEM1d2FqVDF5TFI2VUR1Q0RKbytMcWFCdDBVUXF4WGVXTUV6R3ZsRVpIWmhRSHAyK1psQStkREFJQUFBPT0ifQ== -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Genre"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Comedy"},{"1":"Adventure"},{"1":"Action"},{"1":"Horror"},{"1":"Drama"},{"1":"Romance"},{"1":"Thriller"}],"options":{"columns":{"min":{},"max":[10],"total":[1]},"rows":{"min":[10],"max":[10],"total":[7]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>As we can see, each genre from Movie_Ratings is present, which can lead us to ask the research question presented in the next section.</p>
+<p>Let’s look at these two data frames joined.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTW92aWVEYXRhIDwtIE1vdmllX1JhdGluZ3MgJT4lIGxlZnRfam9pbihHZW5yZXMsIGJ5ID0gXCJHZW5yZVwiKVxuXG5oZWFkKE1vdmllRGF0YSwgNilcbmBgYCJ9 -->
+<pre class="r"><code>MovieData &lt;- Movie_Ratings %&gt;% left_join(Genres, by = &quot;Genre&quot;)
+
+head(MovieData, 6)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MTF9LCJyZGYiOiJINHNJQUFBQUFBQUFCblZUVFd2VVVCUzlNMDNhemd5V1dtZHZVSkVXbkpDSkxWMElNbCswZmxLZHRsamMyR2Z5T2hNbWVTbjVHQjFYL2dpWFFrVmMrd05jK1FNc3VCTVJCRmZkdVJGRVhNejRNcmwzMmdrWUNPZWRjKzU1eVgyNWFiZjJyaGYzaWdBd0F3cmtZVWFWUzVodFBxaWFheWFBa3Bjc0o1MUNnczlsMVFXNUtNbDdNU2xEbzd5OFpoZ3JXb3NOUXMwLzBMWmp6K01CZXFXcWNjMHdESzJoTjNXVUNsVlRhL3V4c01OVFlWMjc1Y2NCQ2ZQVmRhM2VZWTVBcnBoRzFjdzhkTGJwZTl3ZTBCWjF1ODlGRkFlYzdMb1ZPYjc0cnoyVnBtS0FoWVRWZGo4bXB3QzFTNURpVGNSSHRSVHZ2a3l4bWVJa3Q0UCtCdGJmUWR4RmZJaTVyVXhPUS84eDVsZVJtekROSFpqT0hkbXBmclNQU0x5YjRUYmx6bzFQVUo0b0pOOFZJSStvNEJyOWdud1JSWmQzT2NVeEw5TnpHeGUvL215OUEyaFVqcis5SFVxOE92Lzk4b2N6bkh6VUtWZi85ZXJMN2M5U3p5MVZYcjhCcVAvNWZYS3llSWFqVC9xa3o0cGVmdkZqODMzdHhyMVA4anF1cldZNCthaG41bFlWek9NaHBPTlRvcEhhY0Z5UENqYTVPSjBNSzNBaXg2SkpaTEh0Y0dHUnU5U0k3UTZQdEdYUGNWMDVNdHFWRmRwd3dCa052Ukl3MGFQOTd2dDloOU5rbjI5c1BXbnovaVFmVW54dXg3RjZQS0k2ZGJ2TDVDdE5OMUlJL0djNk5aTjhxWHd5UjZQUjZHKzJZOHRsSVhWTVl0Rm1FZE1QQXBtWGJKaUp6UG1IeVM4Z1EvbmtGMWN6NFZ5UUVSWmprYnlKWGJHNnNlaFZ4cjluRVllSkJpMkh3MGJyVXZyTS9BajNVdW1JdU9nNGdvNVlkZGxUN2lKWmtDMlBPOVlQQTBkRTFJcFVRejN5STBaMVJjdDNTUmszQjhOL3RCaHVROXNFQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Film"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Genre"],"name":[2],"type":["chr"],"align":["left"]},{"label":["critic"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["audience"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Budget (million $)"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["year"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["rank"],"name":[7],"type":["int"],"align":["right"]},{"label":["Movies"],"name":[8],"type":["int"],"align":["right"]},{"label":["BO_Rev (millions)"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["Tickets"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["Share"],"name":[11],"type":["dbl"],"align":["right"]}],"data":[{"1":"(500) Days of Summer","2":"Comedy","3":"87","4":"81","5":"8","6":"2009","7":"4","8":"2368","9":"34200064297","10":"5256344733","11":"14.59"},{"1":"10,000 B.C.","2":"Adventure","3":"9","4":"44","5":"105","6":"2008","7":"1","8":"1070","9":"64003887487","10":"9164927892","11":"27.30"},{"1":"12 Rounds","2":"Action","3":"30","4":"52","5":"20","6":"2009","7":"2","8":"1044","9":"47319028189","10":"6701350513","11":"20.18"},{"1":"127 Hours","2":"Adventure","3":"93","4":"84","5":"18","6":"2010","7":"1","8":"1070","9":"64003887487","10":"9164927892","11":"27.30"},{"1":"17 Again","2":"Comedy","3":"55","4":"70","5":"20","6":"2009","7":"4","8":"2368","9":"34200064297","10":"5256344733","11":"14.59"},{"1":"2012","2":"Action","3":"39","4":"63","5":"200","6":"2009","7":"2","8":"1044","9":"47319028189","10":"6701350513","11":"20.18"}],"options":{"columns":{"min":{},"max":[10],"total":[11]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+</div>
+<div id="research-question" class="section level1">
+<h1>Research Question</h1>
+<p>After examining the data, a good research question that we could explore would be the following:</p>
+<p><strong>Does the total Box Office Revenue generated by a genre have any influence on audience ratings for a particular film?</strong></p>
+<p>While the data frames show little evidence of maintenance (Movie_Ratings was uploaded to Kaggle 2 years ago; Genres was only published recently), they are still very useful to answer this question.</p>
+<p>It may not always be the case that overall box office numbers will result in a comedy film being highly rated by viewers, for example. In addition, although ratings can be very subjective, there are often large groups of people who prefer certain genres and will rate its movies very highly.</p>
+<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpbmFsIFByb2plY3QgRURBIg0KYXV0aG9yOiAiVmFpc2hhbGkgRGV2YXJha29uZGEiDQpkYXRlOiAiTm92LiAxMiwgMjAyMCINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiNJbnRybw0KDQpJIHdpbGwgYmUgZXhhbWluaW5nIHRoZSB0d28gZGF0YSBzb3VyY2VzIGZvciB0aGlzIHByb2plY3Q6IHRoZSBmaXJzdCBzb3VyY2UgaXMgYSBkYXRhc2V0IGZyb20gS2FnZ2xlIGRlc2NyaWJpbmcgYXVkaWVuY2UgYW5kIGNyaXRpYyByYXRpbmdzIGZvciBhIHNwZWNpZmljIG1vdmllLCBjcmVhdGVkIGJ5IHVzZXIgTW9ybXVrdXRjaGF1ZGhhcnkuIFRoZSBvdGhlciBpcyBhIHRhYmxlIGZyb20gdGhlLW51bWJlcnMuY29tIHRoYXQgZGVzY3JpYmVzIHRoZSBtYXJrZXQgc2hhcmUgZm9yIG1vdmllIGdlbnJlcyBiZXR3ZWVuIDE5OTUtMjAyMC4NCg0KIyBTZXQgVXANCg0KIyMjIENsZWFuIHVwIGVudmlyb25tZW50IGFuZCBsb2FkIHBhY2thZ2VzDQpgYGB7cn0NCiMgY2xlYW4gdXAgdGhlIFJTdHVkaW8gZW52aXJvbm1lbnQgDQpybShsaXN0ID0gbHMoKSkNCg0KIyBsb2FkIGFsbCBwYWNrYWdlcyBoZXJlOiBgbW9zYWljYCwgYHRpZHl2ZXJzZWAsIGFuZCBhbGwgb3RoZXJzIHVzZWQNCmxpYnJhcnkobW9zYWljKQ0KbGlicmFyeSh0aWR5dmVyc2UpDQpsaWJyYXJ5KHRpZHlyKQ0KbGlicmFyeShydmVzdCkNCmxpYnJhcnkobHVicmlkYXRlKQ0KbGlicmFyeShnZ3Bsb3QyKQ0KDQojdG8gaW1wb3J0IGRhdGFzZXQgSSBuZWVkDQpsaWJyYXJ5KHJlYWRyKQ0KDQpgYGANCg0KIyMjIExvYWQgdGhlIGRhdGEgeW91IG5lZWQNCmBgYHtyfQ0KTW92aWVfUmF0aW5ncyA8LSByZWFkX2NzdigiTW92aWUgUmF0aW5ncy5jc3YiKQ0KVmlldyhNb3ZpZV9SYXRpbmdzKQ0KYGBgDQoNCmBgYHtyfQ0KI2xvb2sgYXQgdGhlIGZpcnN0IDYgcm93cw0KaGVhZChNb3ZpZV9SYXRpbmdzLCA2KQ0KYGBgDQpNb3ZpZV9yYXRpbmdzIChmcm9tIEthZ2dsZSkgaGFzIHRoZSBmb2xsb3dpbmcgY2FzZSBkZWZpbml0aW9uOiAibGlzdCB0aGUgYnVkZ2V0LCBhdWRpZW5jZSwgYW5kIGNyaXRpYyByYXRpbmdzIGZvciBhIGdpdmVuIG1vdmllIi4NCg0KYGBge3J9DQojcmVuYW1lIGNvbHVtbnMgZm9yIHJlYWRhYmlsaXR5DQpNb3ZpZV9SYXRpbmdzIDwtIE1vdmllX1JhdGluZ3MgJT4lIA0KICByZW5hbWUoY3JpdGljID0gJ1JvdHRlbiBUb21hdG9lcyBSYXRpbmdzICUnLA0KICAgICAgICAgYXVkaWVuY2UgPSAnQXVkaWVuY2UgUmF0aW5ncyAlJywNCiAgICAgICAgIHllYXIgPSAnWWVhciBvZiByZWxlYXNlJykNCmBgYA0KDQpGb3IgdGhlIHNlY29uZCBkYXRhIHNvdXJjZSwgd2UnbGwgbmVlZCB0byBleHRyYWN0IGl0IGZyb20gJ3RoZS1udW1iZXJzLmNvbScNCg0KYGBge3J9DQp1cmwgPC0gImh0dHBzOi8vd3d3LnRoZS1udW1iZXJzLmNvbS9tYXJrZXQvZ2VucmVzIg0KDQp0YWJsZUxpc3QgPC0gdXJsICU+JQ0KICByZWFkX2h0bWwoKSAlPiUNCiAgaHRtbF9ub2Rlcyhjc3MgPSAidGFibGUiKSAlPiUNCiAgaHRtbF90YWJsZShmaWxsID0gVFJVRSkNCg0KR2VucmVzIDwtIHRhYmxlTGlzdFtbMV1dDQpoZWFkKEdlbnJlcykNCmBgYA0KR2VucmVzIChmcm9tIHRoZS1udW1iZXJzLmNvbSkgaGFzIHRoZSBmb2xsb3dpbmcgY2FzZSBkZWZpbml0aW9uOiAibGlzdCB0aGUgbnVtYmVyIG9mIG1vdmllcywgdG90YWwgYm94IG9mZmljZSByZXZlbnVlLCBudW1iZXIgb2YgdGlja2V0cyBzb2xkLCBhbmQgdGhlIHRvdGFsIG1hcmtldCBzaGFyZSBmb3IgZWFjaCBtb3ZpZSBnZW5yZSIuDQoNCkhvd2V2ZXIsIHdlJ2xsIG5lZWQgdG8gZ2V0IHNvbWUgY2xlYW5pbmcgZG9uZSBpbiBvcmRlciB0byBtYWtlIHRoaXMgZGF0YSBmcmFtZSB1c2VmdWwuDQoNCmBgYHtyfQ0KR2VucmVzIDwtIEdlbnJlcyAlPiUgbXV0YXRlKFRpY2tldHMgPSBhcy5pbnRlZ2VyKFRpY2tldHMpLA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1vdmllcyA9IGFzLmludGVnZXIoTW92aWVzKSkNCmBgYA0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpbmFsIFByb2plY3QgRURBIg0KYXV0aG9yOiAiVmFpc2hhbGkgRGV2YXJha29uZGEiDQpkYXRlOiAiTm92LiAxMiwgMjAyMCINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiNJbnRybw0KDQpJIHdpbGwgYmUgZXhhbWluaW5nIHRoZSB0d28gZGF0YSBzb3VyY2VzIGZvciB0aGlzIHByb2plY3Q6IHRoZSBmaXJzdCBzb3VyY2UgaXMgYSBkYXRhc2V0IGZyb20gS2FnZ2xlIGRlc2NyaWJpbmcgYXVkaWVuY2UgYW5kIGNyaXRpYyByYXRpbmdzIGZvciBhIHNwZWNpZmljIG1vdmllLCBjcmVhdGVkIGJ5IHVzZXIgTW9ybXVrdXRjaGF1ZGhhcnkuIFRoaXMgZGF0YXNldCBieSBpdHNlbGYgY2FuIGhhdmUgbWFueSB1c2VzLiBGb3IgZXhhbXBsZSwgbW92aWVnb2VycyBjYW4gZXhhbWluZSB0aGlzIHRvIGRldGVybWluZSB3aGV0aGVyIGEgbW92aWUgaXMgd29ydGggd2F0Y2hpbmcuIA0KDQpUaGUgb3RoZXIgaXMgYSB0YWJsZSBmcm9tIHRoZS1udW1iZXJzLmNvbSB0aGF0IGRlc2NyaWJlcyB0aGUgbWFya2V0IHNoYXJlIGZvciBtb3ZpZSBnZW5yZXMgYmV0d2VlbiAxOTk1LTIwMjAuIFRoaXMgZGF0YXNldCBpcyBtb3JlIHVzZWZ1bCwgZm9yIGV4YW1wbGUsIHRvIHBlb3BsZSBpbiB0aGUgbW92aWUgaW5kdXN0cnkgd2hvIGFyZSBjb21pbmcgdXAgd2l0aCBhIG5ldyBjb25jZXB0IGZvciBhIG1vdmllLiBJdCBjb3VsZCBhbHNvIGJlIHVzZWZ1bCBmb3IgbW92aWUgbWFya2V0aW5nIHRlYW1zIHRvIGNvbWUgdXAgd2l0aCBhIGdvb2Qgc3RyYXRlZ3kgdGhhdCBjb3VsZCByZXN1bHQgaW4gaGlnaGVyIGJveCBvZmZpY2UgbnVtYmVycyBhbmQvb3IgcmF0aW5ncw0KDQojIFNldCBVcA0KDQojIyMgQ2xlYW4gdXAgZW52aXJvbm1lbnQgYW5kIGxvYWQgcGFja2FnZXMNCmBgYHtyfQ0KIyBjbGVhbiB1cCB0aGUgUlN0dWRpbyBlbnZpcm9ubWVudCANCnJtKGxpc3QgPSBscygpKQ0KDQojIGxvYWQgYWxsIHBhY2thZ2VzIGhlcmU6IGBtb3NhaWNgLCBgdGlkeXZlcnNlYCwgYW5kIGFsbCBvdGhlcnMgdXNlZA0KbGlicmFyeShtb3NhaWMpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkodGlkeXIpDQpsaWJyYXJ5KHJ2ZXN0KQ0KbGlicmFyeShsdWJyaWRhdGUpDQpsaWJyYXJ5KGdncGxvdDIpDQoNCiN0byBpbXBvcnQgZGF0YXNldCBJIG5lZWQNCmxpYnJhcnkocmVhZHIpDQoNCmBgYA0KDQojIyMgTG9hZCB0aGUgZGF0YSB5b3UgbmVlZA0KYGBge3J9DQpNb3ZpZV9SYXRpbmdzIDwtIHJlYWRfY3N2KCJNb3ZpZSBSYXRpbmdzLmNzdiIpDQpWaWV3KE1vdmllX1JhdGluZ3MpDQpgYGANCg0KYGBge3J9DQojbG9vayBhdCB0aGUgZmlyc3QgNiByb3dzDQpoZWFkKE1vdmllX1JhdGluZ3MsIDYpDQpgYGANCk1vdmllX3JhdGluZ3MgKGZyb20gS2FnZ2xlKSBoYXMgdGhlIGZvbGxvd2luZyBjYXNlIGRlZmluaXRpb246ICJsaXN0IHRoZSBidWRnZXQsIGF1ZGllbmNlLCBhbmQgY3JpdGljIHJhdGluZ3MgZm9yIGEgZ2l2ZW4gbW92aWUiLg0KDQpgYGB7cn0NCiNyZW5hbWUgY29sdW1ucyBmb3IgcmVhZGFiaWxpdHkNCk1vdmllX1JhdGluZ3MgPC0gTW92aWVfUmF0aW5ncyAlPiUgDQogIHJlbmFtZShjcml0aWMgPSAnUm90dGVuIFRvbWF0b2VzIFJhdGluZ3MgJScsDQogICAgICAgICBhdWRpZW5jZSA9ICdBdWRpZW5jZSBSYXRpbmdzICUnLA0KICAgICAgICAgeWVhciA9ICdZZWFyIG9mIHJlbGVhc2UnKQ0KYGBgDQoNClRoZSBzZWNvbmQgZGF0YSBzb3VyY2UgY29tZXMgZnJvbSAndGhlLW51bWJlcnMuY29tJy4gSG93ZXZlciwgSSB3aWxsIGJlIHVzaW5nIGEgY2xlYW5lZCB2ZXJzaW9uIG9mIHRoZSBkYXRhLCB3aGljaCBpcyBsb2FkZWQgaW4gYSBjc3YgZm9ybWF0Lg0KDQpgYGB7cn0NCkdlbnJlcyA8LSByZWFkLmNzdigiQzovVXNlcnMvMTh2ZGUvT25lRHJpdmUvRGVza3RvcC9QU1UvU1RBVCAxODQvR2VucmVzLmNzdiIpDQoNCkdlbnJlcyA8LSBHZW5yZXMgJT4lIHJlbmFtZSAocmFuayA9ICfDry4uUmFuaycsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICdCT19SZXYgKG1pbGxpb25zKScgID0gJ1RvdGFsLkJveC5PZmZpY2UnKQ0KDQpoZWFkKEdlbnJlcywgNikNCmBgYA0KRnJvbSB0aGlzIHRhYmxlLCB3ZSBjYW4gc2VlIHRoYXQgdGhlIGNhc2UgbWVhbmluZyBpcyB0aGUgZm9sbG93aW5nOiAibGlzdCB0aGUgbnVtYmVyIG9mIG1vdmllcywgYm94IG9mZmljZSByZXZlbnVlIChpbiBtaWxsaW9ucyksIG51bWJlciBvZiB0aWNrZXRzIHNvbGQsIGFuZCB0aGUgbWFya2V0IHNoYXJlICglKSBmb3IgZWFjaCBnZW5yZSIuDQoNCg0KIyMjIFNpbWlsYXJpdGllcyBiZXR3ZWVuIHRoZSBkYXRhPw0KDQpXZSBjYW4gc2VlIHRoYXQgTW92aWVfUmF0aW5ncyBhbmQgR2VucmVzIGhhdmUgYSBjb21tb24gdmFyaWFibGU6IEdlbnJlLiBCdXQgaG93IG1hbnkgdmFsdWVzIGFyZSBjb21tb24gYmV0d2VlbiB0aGUgdHdvIGRhdGEgZnJhbWVzPw0KYGBge3J9DQpHZW5yZXMgJT4lIGRpc3RpbmN0KEdlbnJlKQ0KYGBgDQoNCmBgYHtyfQ0KTW92aWVfUmF0aW5ncyAlPiUgZGlzdGluY3QoR2VucmUpDQpgYGANCkFzIHdlIGNhbiBzZWUsIGVhY2ggZ2VucmUgZnJvbSBNb3ZpZV9SYXRpbmdzIGlzIHByZXNlbnQsIHdoaWNoIGNhbiBsZWFkIHVzIHRvIGFzayB0aGUgcmVzZWFyY2ggcXVlc3Rpb24gcHJlc2VudGVkIGluIHRoZSBuZXh0IHNlY3Rpb24uDQoNCkxldCdzIGxvb2sgYXQgdGhlc2UgdHdvIGRhdGEgZnJhbWVzIGpvaW5lZC4NCmBgYHtyfQ0KTW92aWVEYXRhIDwtIE1vdmllX1JhdGluZ3MgJT4lIGxlZnRfam9pbihHZW5yZXMsIGJ5ID0gIkdlbnJlIikNCg0KaGVhZChNb3ZpZURhdGEsIDYpDQpgYGANCg0KIyBSZXNlYXJjaCBRdWVzdGlvbg0KDQpBZnRlciBleGFtaW5pbmcgdGhlIGRhdGEsIGEgZ29vZCByZXNlYXJjaCBxdWVzdGlvbiB0aGF0IHdlIGNvdWxkIGV4cGxvcmUgd291bGQgYmUgdGhlIGZvbGxvd2luZzoNCg0KKipEb2VzIHRoZSB0b3RhbCBCb3ggT2ZmaWNlIFJldmVudWUgZ2VuZXJhdGVkIGJ5IGEgZ2VucmUgaGF2ZSBhbnkgaW5mbHVlbmNlIG9uIGF1ZGllbmNlIHJhdGluZ3MgZm9yIGEgcGFydGljdWxhciBmaWxtPyoqDQoNCldoaWxlIHRoZSBkYXRhIGZyYW1lcyBzaG93IGxpdHRsZSBldmlkZW5jZSBvZiBtYWludGVuYW5jZSAoTW92aWVfUmF0aW5ncyB3YXMgdXBsb2FkZWQgdG8gS2FnZ2xlIDIgeWVhcnMgYWdvOyBHZW5yZXMgd2FzIG9ubHkgcHVibGlzaGVkIHJlY2VudGx5KSwgdGhleSBhcmUgc3RpbGwgdmVyeSB1c2VmdWwgdG8gYW5zd2VyIHRoaXMgcXVlc3Rpb24uIA0KDQpJdCBtYXkgbm90IGFsd2F5cyBiZSB0aGUgY2FzZSB0aGF0IG92ZXJhbGwgYm94IG9mZmljZSBudW1iZXJzIHdpbGwgcmVzdWx0IGluIGEgY29tZWR5IGZpbG0gYmVpbmcgaGlnaGx5IHJhdGVkIGJ5IHZpZXdlcnMsIGZvciBleGFtcGxlLiBJbiBhZGRpdGlvbiwgYWx0aG91Z2ggcmF0aW5ncyBjYW4gYmUgdmVyeSBzdWJqZWN0aXZlLCB0aGVyZSBhcmUgb2Z0ZW4gbGFyZ2UgZ3JvdXBzIG9mIHBlb3BsZSB3aG8gcHJlZmVyIGNlcnRhaW4gZ2VucmVzIGFuZCB3aWxsIHJhdGUgaXRzIG1vdmllcyB2ZXJ5IGhpZ2hseS4NCg==</div>
 
 
 
