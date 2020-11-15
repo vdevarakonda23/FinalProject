@@ -84,24 +84,26 @@ head(MovieData, 6)
 ```
 The case meaning here is a bit different: not only does it look at the ratings (critic and audience) as well as budget for a given movie, but it also looks at how the film's genre has been doing for the past 25 years (examine the number of movies made and tickets sold, the overall box office revenue, and the overall ranking of the genre).
 
-Now let's look at a summary for each
+Now let's look at a summary for each.
 ```{r}
 summary(MovieData)
 ```
+Some of the most interesting variables are 'audience', 'critic', and 'Share'. for the first two variables, the spread of values is much larger for critic ratings than audience ratings, which will be interesting to explore. For the market share, the mean value of only 15% is useful, as that could indicate which genres people enjoy more or less.
+
 # Research Question
 
 After examining the data, a good research question that we could explore would be the following:
 
-**Does the market share of a genre have any influence on audience and critic ratings for a particular film?**
+**How big of an influence do the the ratings of a certain film have on the market share of a genre?**
 
 While the data frames show little evidence of maintenance (Movie_Ratings was uploaded to Kaggle 2 years ago; Genres was only published recently), they are still very useful to answer this question. 
 
-It may not always be the case that market share numbers will result in a film being highly rated by viewers. For example, a film may make higher profits and its genre may have a large market share, but critics often disagree with viewers due to oversaturation of film ideas. There is also the case of people who are "ride or die" fans of a given genre. Although ratings can be very subjective, there are often large groups of people who push the profits of a certain genre to the higher end. 
+It may not always be the case that higher ratings will result in an increased market share. For example, a film may make higher profits and its genre may have a large market share, but critics often disagree with viewers due to oversaturation of film ideas. There is also the case of people who are "ride or die" fans of a given genre. Although ratings can be very subjective, there are often large groups of people who push the profits of a certain genre to the higher end. 
 
 
 # Exploring RQ
 
-Since my research question looks at market share audience ratings, and critic ratings, I will use the following variables:
+Since my research question looks at market share, audience ratings, and critic ratings, I will use the following variables:
 
 * audience
 * critic
@@ -115,7 +117,7 @@ MovieData %>% ggplot(aes(x = audience)) +
   geom_density(aes(color = Genre))
 ```
 
-Overall, Thriller, Romance, and Drama movies are among the highest-rated films by audience members, but what about critics?
+Overall, Thriller, Romance, and Drama movies are among the highest-rated films by audience members, while Horror, Action, and Comedy movies are rated the lowest. But what do critics think?
 
 ```{r}
 #Explore distribution for critic ratings
@@ -123,16 +125,32 @@ MovieData %>% ggplot(aes(x = critic)) +
   geom_density(aes(color = Genre))
 ```
 
-Critics agreed with audiences when it came to thrillers and Romance films, but at lower levels than audiences. They also considered adventure movies to be higher rated than drama films. In order to make sense of the research question, however, we'll need to examine the difference between critic and audience scores.
+Critics generally agreed with audiences, but it seems that the difference between the ratings was large. In order to make sense of the research question, we'll need to examine the difference between critic and audience scores.
 
 ```{r}
-# find difference between audience and critic
-MovieData %>% mutate(difference = abs(audience - critic))
+MovieData %>% ggplot(aes(x = Genre, y = critic)) + 
+  geom_boxplot(aes(fill = Genre))
+```
+```{r}
+MovieData %>% ggplot(aes(x = Genre, y = audience)) + 
+  geom_boxplot(aes(fill = Genre))
 ```
 
-Since we are also looking at the market share per genre, we'll need to understand how the market share is distributed among the movie industry. We might get a clearer understanding of this by using the 'Genres' table, as that has a clearer breakdown of the market share
+```{r}
+# find mean difference between audience and critic
+# taking mean to account for each film in movieData
+MovieData %>% mutate(difference = abs(audience - critic)) %>% group_by(Genre) %>% summarize(meanDiff = mean(difference)) %>% arrange(desc(meanDiff))
+```
+Overall, we see that the largest disparities come between Romance and Comedy movies, while audiences and critics are more likely to agree on ratings between adventure and thriller movies. However, as stated before, the audience rating spread is much more narrow than critic ratings, so it is possible that market share could be more influenced by audience ratings rather than critic ratings.
+
+We'll need to understand how the market share is distributed among the movie industry. We might get a clearer understanding of this by using the 'Genres' table, as that has a clearer breakdown of the market share
 
 ```{r}
 Genres %>% ggplot(aes(x = Share, y = Genre)) +
   geom_col()
 ```
+
+
+# Next Steps
+
+Now that we've examined our variables some more, we will need to go more into detail about _how_ each rating influences market share. Data visualization techniques, as well as a closer look at each generated data frame, will play a large role in this next part.
