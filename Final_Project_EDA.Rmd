@@ -5,7 +5,7 @@ date: "Nov. 12, 2020"
 output: html_notebook
 ---
 
-#Intro
+# Intro
 
 I will be examining the two data sources for this project: the first source is a dataset from Kaggle describing audience and critic ratings for a specific movie, created by user Mormukutchaudhary. This dataset by itself can have many uses. For example, moviegoers can examine this to determine whether a movie is worth watching. 
 
@@ -14,7 +14,7 @@ The other is a table from the-numbers.com that describes the market share for mo
 # Set Up
 
 ### Clean up environment and load packages
-```{r}
+```{r, warning=FALSE, message = FALSE}
 # clean up the RStudio environment 
 rm(list = ls())
 
@@ -141,6 +141,7 @@ MovieData %>% ggplot(aes(x = Genre, y = audience)) +
 # taking mean to account for each film in movieData
 MovieData %>% mutate(difference = abs(audience - critic)) %>% group_by(Genre) %>% summarize(meanDiff = mean(difference)) %>% arrange(desc(meanDiff))
 ```
+
 Overall, we see that the largest disparities come between Romance and Comedy movies, while audiences and critics are more likely to agree on ratings between adventure and thriller movies. However, as stated before, the audience rating spread is much more narrow than critic ratings, so it is possible that market share could be more influenced by audience ratings rather than critic ratings.
 
 We'll need to understand how the market share is distributed among the movie industry. We might get a clearer understanding of this by using the 'Genres' table, as that has a clearer breakdown of the market share
@@ -149,7 +150,6 @@ We'll need to understand how the market share is distributed among the movie ind
 Genres %>% ggplot(aes(x = Share, y = Genre)) +
   geom_col()
 ```
-
 
 # Next Steps
 
