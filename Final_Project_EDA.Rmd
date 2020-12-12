@@ -32,7 +32,7 @@ library(readr)
 ```
 
 ### Load the data you need
-```{r}
+```{r, message=FALSE}
 Movie_Ratings <- read_csv("Movie Ratings.csv")
 View(Movie_Ratings)
 ```
@@ -103,11 +103,12 @@ It may not always be the case that higher ratings will result in an increased ma
 
 # Exploring RQ
 
-Since my research question looks at market share, audience ratings, and critic ratings, I will use the following variables:
+Since my research question looks at market share per genre, audience ratings, and critic ratings, I will use the following variables:
 
 * audience
 * critic
 * Share
+* Genre
 
 we'll need to understand which genres are most preferred and which make the most revenue in order to complete this question.
 
@@ -123,6 +124,7 @@ Overall, Thriller, Romance, and Drama movies are among the highest-rated films b
 #Explore distribution for critic ratings
 MovieData %>% ggplot(aes(x = critic)) +
   geom_density(aes(color = Genre))
+
 ```
 
 Critics generally agreed with audiences, but it seems that the difference between the ratings was large. In order to make sense of the research question, we'll need to examine the difference between critic and audience scores.
@@ -130,11 +132,17 @@ Critics generally agreed with audiences, but it seems that the difference betwee
 ```{r}
 MovieData %>% ggplot(aes(x = Genre, y = critic)) + 
   geom_boxplot(aes(fill = Genre))
+
 ```
+
+
+
 ```{r}
 MovieData %>% ggplot(aes(x = Genre, y = audience)) + 
   geom_boxplot(aes(fill = Genre))
+
 ```
+
 
 ```{r}
 # find mean difference between audience and critic
@@ -144,13 +152,77 @@ MovieData %>% mutate(difference = abs(audience - critic)) %>% group_by(Genre) %>
 
 Overall, we see that the largest disparities come between Romance and Comedy movies, while audiences and critics are more likely to agree on ratings between adventure and thriller movies. However, as stated before, the audience rating spread is much more narrow than critic ratings, so it is possible that market share could be more influenced by audience ratings rather than critic ratings.
 
-We'll need to understand how the market share is distributed among the movie industry. We might get a clearer understanding of this by using the 'Genres' table, as that has a clearer breakdown of the market share
+We'll need to understand how the market share is distributed among the movie industry. We might get a clearer understanding of this by using the 'Genres' table, as that has a clearer breakdown of the market share.
 
 ```{r}
 Genres %>% ggplot(aes(x = Share, y = Genre)) +
   geom_col()
 ```
 
+However, we see some genres that aren't included in our MovieData, so let's take a closer look at those:
+```{r, message = FALSE}
+#create a wide data frame to examine share for genres that are in the MovieData table
+ShareData <- MovieData %>%
+  group_by(Genre) %>% 
+  summarize(share = mean(Share)) %>%
+  spread(key = Genre, value = share)
+
+ShareData
+
+```
+
 # Next Steps
 
 Now that we've examined our variables some more, we will need to go more into detail about _how_ each rating influences market share. Data visualization techniques, as well as a closer look at each generated data frame, will play a large role in this next part.
+
+In order to answer our research question, we need to examine where the market share lies in relation to the average audience and critic ratings per year. 
+
+The reason we need to look at yearly averages for ratings is because the market share has a good chance of fluctuating yearly. However, we are only provided an _overall_ market share value in our Genres data. Thus, we will have to see if annual ratings could have an effect on the _current_ market share.
+
+```{r, message = FALSE}
+#create table showing average critic ratings per genre (layer 1)
+AvgCritic <- MovieData %>%
+  group_by(Genre, year) %>%
+  summarize(avgCritic = mean(critic))
+  
+AvgCritic
+```
+
+```{r, message = FALSE}
+#create table showing average critic ratings per genre (layer 2)
+AvgAud <- MovieData %>%
+  group_by(Genre, year) %>%
+  summarize(avgAud = mean(audience))
+  
+AvgAud
+```
+```{r}
+#Only look at the average Share per year for each genre
+#creating the meanShare column to make our group_by function work
+
+SharePerYear <- MovieData %>% 
+  select(Genre, year, Share) %>%
+  group_by(year, Genre) %>% 
+  summarize(meanShare = mean(Share))
+
+SharePerYear
+```
+
+
+Now that we have the tables we need, let's visualize our results.
+
+```{r}
+AvgCritic %>% ggplot(aes(x = year, y = avgCritic)) +
+  geom_line(color = "pink") +
+  geom_line(data = AvgAud, aes(x = year, y = avgAud), color = "blue") +
+  geom_point(data = SharePerYear, aes(x = year, y = meanShare), color = "green") +
+  theme(axis.text.x = element_text(angle = 90, hjust=1)) +
+  facet_wrap(~ Genre, ncol = 7)
+
+```
+
+
+
+
+
+
