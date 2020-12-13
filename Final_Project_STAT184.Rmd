@@ -104,7 +104,7 @@ While the data frames show little evidence of maintenance (Movie_Ratings was upl
 It may not always be the case that higher ratings will result in an increased market share. For example, a film may make higher profits and its genre may have a large market share, but critics often disagree with viewers due to oversaturation of film ideas. There is also the case of people who are "ride or die" fans of a given genre. Although ratings can be very subjective, there are often large groups of people who push the profits of a certain genre to the higher end. 
 
 
-# Exploring RQ
+### Exploring RQ
 
 Since my research question looks at market share per genre, audience ratings, and critic ratings, I will use the following variables:
 
